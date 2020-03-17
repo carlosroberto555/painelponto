@@ -2,6 +2,7 @@
   "name": "pontoeletronico",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://resolve-ponto-eletronico.firebaseapp.com",
   "dependencies": {
     "bootstrap": "^4.4.1",
     "firebase": "^7.5.0",

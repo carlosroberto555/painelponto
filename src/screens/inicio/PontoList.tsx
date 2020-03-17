@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Container } from "reactstrap";
 import { firestore } from "firebase/app";
 import moment from "moment";
+
+import { Row, Col, Container, Spinner, Alert } from "reactstrap";
 
 import { Lista, Info } from "./style";
 
 type Props = {
   filter: string;
 };
+
 export default function Inicio({ filter }: Props) {
   const [pontos, setPonto] = useState<PontoItem[]>([]);
+  const [error, setError] = useState<Error>();
 
   function onSnapshot(snap: QuerySnapshot) {
     const items = snap.docs.map(doc => {
@@ -34,7 +37,7 @@ export default function Inicio({ filter }: Props) {
     return firestore()
       .collection("pontos")
       .orderBy("time", "desc")
-      .onSnapshot(onSnapshot);
+      .onSnapshot(onSnapshot, setError);
   }, []);
 
   function getStatus(status: number) {
@@ -72,16 +75,31 @@ export default function Inicio({ filter }: Props) {
           <Col sm="2">Tipo</Col>
         </Row>
       </Info>
-      {pontos.filter(filtro).map(ponto => (
-        <Lista key={ponto.key}>
-          <Row>
-            <Col sm="4">{ponto.person}</Col>
-            <Col sm="2">{ponto.office}</Col>
-            <Col sm="4">{ponto.time}</Col>
-            <Col sm="2">{getStatus(ponto.type)}</Col>
-          </Row>
-        </Lista>
-      ))}
+      {pontos.length ? (
+        pontos.filter(filtro).map(ponto => (
+          <Lista key={ponto.key}>
+            <Row>
+              <Col sm="4">{ponto.person}</Col>
+              <Col sm="2">{ponto.office}</Col>
+              <Col sm="4">{ponto.time}</Col>
+              <Col sm="2">{getStatus(ponto.type)}</Col>
+            </Row>
+          </Lista>
+        ))
+      ) : (
+        <Row>
+          <Col className="d-flex justify-content-center p-5">
+            {error ? (
+              <Alert color="danger">
+                <h4 className="alert-heading">{error.name}</h4>
+                <p className="mb-0">{error.message}</p>
+              </Alert>
+            ) : (
+              <Spinner color="primary" />
+            )}
+          </Col>
+        </Row>
+      )}
     </Container>
   );
 }
