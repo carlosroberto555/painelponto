@@ -24,7 +24,10 @@ export default function Inicio({ filter }: Props) {
   }
 
   function strNormalize(str: string) {
-    return str?.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    return str
+      ?.normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
   }
 
   useEffect(() => {
@@ -49,6 +52,8 @@ export default function Inicio({ filter }: Props) {
 
   function filtro(ponto: PontoItem) {
     const nome = ponto.person;
+
+    console.log(strNormalize(filter), strNormalize(nome));
 
     if (filter === "Todos" || strNormalize(filter) === strNormalize(nome)) {
       return true;
